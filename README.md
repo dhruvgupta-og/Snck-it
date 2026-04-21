@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Snack It | Campus Food Delivery
+
+A premium, mobile-first food delivery application tailored for college campuses.
+
+## Features
+- **Mobile-First Design**: Optimized for a 480px max width with a premium Gen Z aesthetic.
+- **Role-Based Access**: Support for Users (Students), Admins, and Vendors.
+- **Modern UI**: Red/Orange gradients, Inter/Poppins typography, glassmorphism, and smooth animations.
+- **Cart System**: Advanced cart with quantity controls and store-lock.
+- **Real-time Orders**: Real-time order tracking and admin status updates.
+- **Onboarding**: Dynamic college selection and profile setup.
+
+## Tech Stack
+- **Frontend**: Next.js 14, TypeScript, Framer Motion, Lucide Icons.
+- **Backend**: Firebase Auth, Firestore, Hosting.
+- **Styling**: Vanilla CSS with modern design tokens.
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone and Install**:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. **Firebase Setup**:
+   - Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com).
+   - Enable **Google Authentication**.
+   - Create a **Firestore Database**.
+   - Copy `env.local.example` to `.env.local` and fill in your credentials.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. **Database Collections**:
+   Ensure you have the following collections created (even if empty):
+   - `users`
+   - `colleges`
+   - `stores`
+   - `menuItems`
+   - `orders`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. **Run Locally**:
+   ```bash
+   npm run dev
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Admin Panel
+Access the admin panel at `/admin`. Note: Ensure your user document in Firestore has `role: "admin"` to access.
