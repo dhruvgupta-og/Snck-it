@@ -3,10 +3,29 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { collection, getDocs } from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
 import { db } from "@/lib/firebase";
 import { LogIn, MapPin, Phone, User, ChevronRight, ArrowRight, Sparkles } from "lucide-react";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+  "auth/unauthorized-domain":
+    "This domain is not authorized in Firebase Auth. Add your deployed domain in Firebase Console -> Authentication -> Settings -> Authorized domains.",
+  "auth/invalid-api-key":
+    "Firebase API key is missing or invalid. Check NEXT_PUBLIC_FIREBASE_API_KEY in your deployment environment.",
+  "auth/operation-not-allowed":
+    "Google sign-in is disabled. Enable the Google provider in Firebase Console -> Authentication -> Sign-in method.",
+  "auth/network-request-failed":
+    "Network error during sign in. Please retry on a stable network.",
+};
+
+function getAuthErrorMessage(error: unknown) {
+  if (error instanceof FirebaseError) {
+    return AUTH_ERROR_MESSAGES[error.code] || `Sign in failed (${error.code}).`;
+  }
+  return "Sign in failed. Please try again.";
+}
 
 export default function Onboarding() {
   const { loginWithGoogle, user, profile, updateProfile } = useAuth();
@@ -17,6 +36,7 @@ export default function Onboarding() {
     collegeId: ""
   });
   const [loading, setLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
 
   useEffect(() => {
     const fetchColleges = async () => {
@@ -51,6 +71,17 @@ export default function Onboarding() {
       toast.error("Failed to update profile");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoginLoading(true);
+    try {
+      await loginWithGoogle();
+    } catch (error) {
+      toast.error(getAuthErrorMessage(error));
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -120,11 +151,12 @@ export default function Onboarding() {
             >
               <h3 className="font-bold text-xl mb-4">Ready to order?</h3>
               <button 
-                onClick={loginWithGoogle}
-                className="w-full h-14 bg-gradient-to-r from-gray-900 to-black text-white font-black rounded-2xl shadow-lg hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-lg group"
+                onClick={handleGoogleLogin}
+                disabled={loginLoading}
+                className="w-full h-14 bg-gradient-to-r from-gray-900 to-black text-white font-black rounded-2xl shadow-lg hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100 transition-all flex items-center justify-center gap-3 text-lg group"
               >
                 <LogIn size={20} className="group-hover:-translate-x-1 transition-transform" />
-                Sign in to Order
+                {loginLoading ? "Opening Google..." : "Sign in to Order"}
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform text-gray-400" />
               </button>
               <p className="mt-4 text-[10px] uppercase tracking-widest font-bold text-text-muted">

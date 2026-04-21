@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { 
   onAuthStateChanged, 
   signInWithPopup, 
+  signInWithRedirect,
   GoogleAuthProvider, 
   signOut,
   User as FirebaseUser 
@@ -71,7 +72,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    provider.setCustomParameters({ prompt: "select_account" });
+
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      const code = (error as { code?: string })?.code;
+      if (
+        code === "auth/popup-blocked" ||
+        code === "auth/cancelled-popup-request" ||
+        code === "auth/operation-not-supported-in-this-environment"
+      ) {
+        await signInWithRedirect(auth, provider);
+        return;
+      }
+      throw error;
+    }
   };
 
   const logout = async () => {

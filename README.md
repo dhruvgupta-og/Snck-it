@@ -26,7 +26,7 @@ A premium, mobile-first food delivery application tailored for college campuses.
    - Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com).
    - Enable **Google Authentication**.
    - Create a **Firestore Database**.
-   - Copy `env.local.example` to `.env.local` and fill in your credentials.
+   - Fill in your Firebase credentials directly in `.env`.
 
 3. **Database Collections**:
    Ensure you have the following collections created (even if empty):
@@ -40,6 +40,14 @@ A premium, mobile-first food delivery application tailored for college campuses.
    ```bash
    npm run dev
    ```
+
+## Deployment Auth Checklist
+If Google sign-in works locally but fails after deployment, check these first:
+
+1. Add all `NEXT_PUBLIC_FIREBASE_*` variables in your hosting provider (for example Vercel) before building.
+2. In Firebase Console, go to `Authentication -> Settings -> Authorized domains` and add your deployed domain.
+3. In Firebase Console, go to `Authentication -> Sign-in method` and ensure the Google provider is enabled.
+4. Redeploy after updating env vars, because `NEXT_PUBLIC_*` values are inlined at build time.
 
 ## Admin Panel
 Access the admin panel at `/admin`. Note: Ensure your user document in Firestore has `role: "admin"` to access.
